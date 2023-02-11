@@ -1,0 +1,54 @@
+name: helm
+
+permissions:
+  contents: read
+  id-token: write
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'infra/go-demo-app/**'
+  pull_request:
+    branches: [ 'main' ]
+    paths:
+      - 'infra/go-demo-app/**'
+  workflow_dispatch:
+
+env:
+  CHART_NAME: go-demo-app
+  CHART_VERSION: "0.1.4"
+  
+jobs:
+  helm:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - id: auth
+        uses: google-github-actions/auth@v1
+        name: Authenticate to Google Cloud
+        with:
+          workload_identity_provider: '${{ secrets.WI_POOL_PROVIDER_ID }}'
+          service_account: '${{ secrets.PACKAGER_GSA_ID }}'
+          token_format: 'access_token'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          version: latest
+
+      - name: Login to GCP Artifact Registry
+        run: |
+          gcloud auth configure-docker ${{ secrets.ARTIFACT_REGISTRY_HOST_NAME }} --quiet
+          # gcloud auth print-access-token | helm registry login -u oauth2accesstoken --password-stdin https://${{ secrets.ARTIFACT_REGISTRY_HOST_NAME }}
+          
+      - name: Helm package
+        run: |
+          helm package infra/go-demo-app --version $CHART_VERSION
+
+      - name: Helm push
+        run: |
+          helm push $CHART_NAME-$CHART_VERSION.tgz oci://${{ secrets.ARTIFACT_REGISTRY_HOST_NAME }}/${{ secrets.PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPOSITORY }} --debug
