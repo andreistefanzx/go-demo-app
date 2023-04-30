@@ -1,4 +1,4 @@
-name: build_and_test
+name: test_build_and_push
 
 on:
   push:
@@ -39,6 +39,21 @@ jobs:
   #         push: true
   #         tags: ${{ github.repository }}:${{ github.sha }}
 
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.19
+
+    - name: Build
+      run: go build -v ./...
+
+    - name: Test
+      run: go test -v ./...
 
   build-and-push-gcr:
     needs: unit-test
@@ -81,19 +96,3 @@ jobs:
 
       - name: Push Docker image
         run: docker push ${{ secrets.ARTIFACT_REGISTRY_HOST_NAME }}/${{ secrets.PROJECT_ID }}/container-images/dev/go-demo-app:${{ github.sha }}
-
-  unit-test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Set up Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: 1.19
-
-    - name: Build
-      run: go build -v ./...
-
-    - name: Test
-      run: go test -v ./...
