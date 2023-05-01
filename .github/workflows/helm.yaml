@@ -18,9 +18,9 @@ on:
       - 'infra/go-demo-app/**'
   workflow_dispatch:
 
-# env:
+env:
 #   CHART_NAME: go-demo-app
-  # CHART_VERSION: "0.1.4"
+  CHART_VERSION: "0.1.4"
   
 jobs:
   helm:
@@ -48,7 +48,7 @@ jobs:
           
       - name: Helm package
         run: |
-          helm package infra/go-demo-app --version ${{ github.sha }}
+          helm package infra/go-demo-app --version $CHART_VERSION
 
       - name: Helm push
         run: |
