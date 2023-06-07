@@ -28,10 +28,11 @@ helm template go-demo-app --namespace test --create-namespace oci://australia-so
 ## Setup github actions workflow env vars
 
 ```
-PROJECT_ID="YOUR_PROJECT_ID"
+PROJECT_ID="dazzling-tiger-384923"
 SA_NAME="github-runner"
 REGION="australia-southeast2"
-WI_POOL_PROVIDER_ID=$(gcloud iam workload-identity-pools providers describe go-demo-app-prvdr --workload-identity-pool=go-demo-app --location global --format='get(name)')
+WI_POOL_PROVIDER_ID=$(gcloud iam workload-identity-pools providers describe go-demo-app --workload-identity-pool=go-demo-app --location global --format='get(name)')
+echo $WI_POOL_PROVIDER_ID
 
 gh secret set PROJECT_ID -b"${PROJECT_ID}"
 gh secret set HELM_REPO_ID -b"cmek-helm-charts"
