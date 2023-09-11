@@ -20,19 +20,24 @@ on:
   workflow_dispatch:
 
 env:
-#   CHART_NAME: go-demo-app
-  CHART_VERSION: "0.1.4"
+  CHART_VERSION: "v0.1.0-${{ github.run_number }}"
   
 jobs:
   helm:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - id: auth
+      - name: Get the latest Git tag
+        id: get-latest-tag
+        run: |
+          echo "latest_tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+
+      - name: Authenticate to Google Cloud
+        id: auth
         uses: google-github-actions/auth@v1
-        name: Authenticate to Google Cloud
         with:
           workload_identity_provider: '${{ secrets.WI_POOL_PROVIDER_ID }}'
           service_account: '${{ secrets.PACKAGER_GSA_ID }}'
