@@ -1,7 +1,8 @@
 # go-demo-app
 
 This repo has github actions workflows for pushing container image and helm chart to Google Artifact Registry (GAR).
-The terraform code for building the GAR is [here](https://github.com/andreistefanciprian/terraform-kubernetes-gke-cluster).
+* Terraform code for building the GAR is [here](https://github.com/andreistefanciprian/terraform-kubernetes-gke-cluster).
+* K8s deployment code via flux [here](https://github.com/andreistefanciprian/flux-demo/blob/main/clusters/home/go-demo-app.yaml)
 
 ## Deploy app to k8s
 ```
