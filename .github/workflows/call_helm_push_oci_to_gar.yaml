@@ -23,7 +23,7 @@ jobs:
   generate-build-id:
     runs-on: ubuntu-latest
     outputs:
-      BUILD_ID: "v0.1.0-${{ steps.prep.outputs.BUILD_ID }}"
+      CHART_VERSION: "v0.1.0-${{ steps.prep.outputs.BUILD_ID }}"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -41,5 +41,5 @@ jobs:
     uses: andreistefanciprian/gh-reusable-workflows/.github/workflows/build_and_push_helm_chart_to_gar.yaml@main
     with:
       app_name: go-demo-app
-      build_id: ${{ needs.generate-build-id.outputs.BUILD_ID }}
+      chart_version: ${{ needs.generate-build-id.outputs.CHART_VERSION }}
     secrets: inherit
