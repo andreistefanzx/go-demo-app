@@ -24,7 +24,7 @@ jobs:
   generate-build-id:
     runs-on: ubuntu-latest
     outputs:
-      BUILD_ID: ${{ steps.prep.outputs.BUILD_ID }}
+      BUILD_ID: "v0.1.0-${{ steps.prep.outputs.BUILD_ID }}"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
