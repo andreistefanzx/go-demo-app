@@ -42,5 +42,5 @@ jobs:
     uses: andreistefanciprian/gh-reusable-workflows/.github/workflows/build_and_push_docker_image_to_gar.yaml@main
     with:
       app_name: go-demo-app
-      build_id: ${{ needs.generate-build-id.outputs.BUILD_ID }}
+      build_id: "v0.1.0-${{ github.run_number }}"
     secrets: inherit
