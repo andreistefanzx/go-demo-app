@@ -1,0 +1,45 @@
+name: Helm package and push OCI image to GAR
+
+permissions:
+  contents: read
+  id-token: write
+
+on:
+  push:
+    tags:
+      - '*'
+    branches:
+      - 'main'
+    paths:
+      - 'infra/go-demo-app/**'
+  pull_request:
+    branches: [ 'main' ]
+    paths:
+      - 'infra/go-demo-app/**'
+      - '.github/workflows/helm.yaml'
+  workflow_dispatch:
+
+jobs:
+  generate-build-id:
+    runs-on: ubuntu-latest
+    outputs:
+      BUILD_ID: ${{ steps.prep.outputs.BUILD_ID }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate build ID
+        id: prep
+        run: |
+          branch=${GITHUB_REF##*/}
+          sha=${GITHUB_SHA::8}
+          ts=$(date +%s)
+          echo "BUILD_ID=${branch}-${sha}-${ts}" >> $GITHUB_OUTPUT
+
+  package-and-push-helm-chart-to-gar:
+    needs: generate-build-id
+    uses: andreistefanciprian/gh-reusable-workflows/.github/workflows/build_and_push_helm_chart_to_gar.yaml@main
+    with:
+      app_name: go-demo-app
+      build_id: ${{ needs.generate-build-id.outputs.BUILD_ID }}
+    secrets: inherit
