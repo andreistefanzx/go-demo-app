@@ -24,7 +24,7 @@ jobs:
   generate-build-id:
     runs-on: ubuntu-latest
     outputs:
-      BUILD_ID: "v0.1.0-${{ steps.prep.outputs.BUILD_ID }}"
+      BUILD_ID: ${{ steps.prep.outputs.BUILD_ID }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
           branch=${GITHUB_REF##*/}
           sha=${GITHUB_SHA::8}
           ts=$(date +%s)
-          echo "BUILD_ID=${branch}-${sha}-${ts}" >> $GITHUB_OUTPUT
+          echo "BUILD_ID=v0.1.0-${branch}-${sha}-${ts}" >> $GITHUB_OUTPUT
 
   build-and-push-docker-image-to-gar:
     needs: generate-build-id
